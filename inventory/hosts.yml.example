@@ -1,0 +1,8 @@
+all:
+  hosts:
+    elitedesk:
+      ansible_host: 192.0.2.10
+      ansible_user: changeme
+    raspberrypi:
+      ansible_host: 192.0.2.11
+      ansible_user: changeme
