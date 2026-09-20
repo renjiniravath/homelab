@@ -1,0 +1,14 @@
+[project]
+name = "homelab"
+version = "0.1.0"
+requires-python = ">=3.12"
+dependencies = []
+
+[tool.uv]
+package = false
+
+[dependency-groups]
+dev = [
+    "ansible-core>=2.21.4",
+    "ansible-lint>=26.8.0",
+]

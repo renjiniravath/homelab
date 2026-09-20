@@ -10,7 +10,7 @@ already does on every edit.
 
 1. Run:
    ```
-   PYTHONWARNINGS=ignore uvx ansible-lint --nocolor -f pep8 playbooks roles
+   uv run ansible-lint --nocolor --offline -f pep8 playbooks roles
    ```
 2. If there is no output, report that the tree is clean.
 3. If there are violations, list them grouped by file, then fix them one at a

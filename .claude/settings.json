@@ -18,7 +18,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "jq -r '.tool_input.file_path // .tool_response.filePath // empty' | { read -r f; case \"$f\" in *playbooks/*.yml|*playbooks/*.yaml|*roles/*.yml|*roles/*.yaml) out=$(PYTHONWARNINGS=ignore uvx ansible-lint --nocolor -f pep8 \"$f\" 2>&1); if [ -n \"$out\" ]; then jq -n --arg out \"$out\" '{hookSpecificOutput:{hookEventName:\"PostToolUse\",additionalContext:$out}}'; fi;; esac; }",
+            "command": "jq -r '.tool_input.file_path // .tool_response.filePath // empty' | { read -r f; case \"$f\" in *playbooks/*.yml|*playbooks/*.yaml|*roles/*.yml|*roles/*.yaml) out=$(uv run ansible-lint --nocolor --offline -f pep8 \"$f\" 2>&1); if [ -n \"$out\" ]; then jq -n --arg out \"$out\" '{hookSpecificOutput:{hookEventName:\"PostToolUse\",additionalContext:$out}}'; fi;; esac; }",
             "statusMessage": "Running ansible-lint..."
           }
         ]

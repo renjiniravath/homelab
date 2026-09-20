@@ -11,6 +11,13 @@ inventory/group_vars/*/vault.yml
 id_rsa*
 id_ed25519*
 
+# Service repos live in their own repositories
+services/
+
+# Python / uv
+.venv/
+.ansible/
+
 # OS / editor
 .DS_Store
 .vscode/

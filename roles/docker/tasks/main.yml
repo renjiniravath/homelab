@@ -1,0 +1,39 @@
+---
+- name: Add Docker APT repository
+  ansible.builtin.deb822_repository:
+    name: docker
+    types: [deb]
+    uris: "https://download.docker.com/linux/ubuntu"
+    suites: "{{ ansible_facts['distribution_release'] }}"
+    components: [stable]
+    architectures: "{{ {'x86_64': 'amd64', 'aarch64': 'arm64', 'armv7l': 'armhf'}[ansible_facts['architecture']] }}"
+    signed_by: "https://download.docker.com/linux/ubuntu/gpg"
+    state: present
+  notify: Update apt cache
+
+- name: Flush handlers so the Docker repository is available immediately
+  ansible.builtin.meta: flush_handlers
+
+- name: Install Docker packages
+  ansible.builtin.apt:
+    name:
+      - docker-ce
+      - docker-ce-cli
+      - containerd.io
+      - docker-buildx-plugin
+      - docker-compose-plugin
+    state: present
+  # Check mode never writes the repo file, so the packages look unavailable.
+  ignore_errors: "{{ ansible_check_mode }}"
+
+- name: Add homelab user to the docker group
+  ansible.builtin.user:
+    name: "{{ ansible_facts['env']['SUDO_USER'] }}"
+    groups: docker
+    append: true
+
+- name: Ensure Docker service is enabled and running
+  ansible.builtin.systemd_service:
+    name: docker
+    enabled: true
+    state: started

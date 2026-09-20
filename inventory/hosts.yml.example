@@ -1,8 +1,9 @@
+# Copy to hosts.yml (gitignored) and replace the placeholder names.
+# Each name must match a Host alias in ~/.ssh/config, which supplies the
+# address, user and key, so no IPs or usernames belong in this file.
 all:
-  hosts:
-    elitedesk:
-      ansible_host: 192.0.2.10
-      ansible_user: changeme
-    raspberrypi:
-      ansible_host: 192.0.2.11
-      ansible_user: changeme
+  children:
+    homelab:
+      hosts:
+        example-server:
+        example-pi:

@@ -1,0 +1,67 @@
+---
+- name: Update apt cache
+  ansible.builtin.apt:
+    update_cache: true
+    cache_valid_time: 3600
+
+- name: Upgrade all packages
+  ansible.builtin.apt:
+    upgrade: safe
+
+- name: Install baseline packages
+  ansible.builtin.apt:
+    name:
+      - ca-certificates
+      - curl
+      - gnupg
+      - python3-debian
+      - ufw
+      - unattended-upgrades
+    state: present
+
+- name: Enable unattended security upgrades
+  ansible.builtin.copy:
+    dest: /etc/apt/apt.conf.d/20auto-upgrades
+    content: |
+      APT::Periodic::Update-Package-Lists "1";
+      APT::Periodic::Unattended-Upgrade "1";
+    owner: root
+    group: root
+    mode: "0644"
+
+- name: Check UFW status
+  ansible.builtin.command: ufw status verbose
+  register: common_ufw_status
+  changed_when: false
+  check_mode: false
+
+- name: Allow OpenSSH through UFW
+  ansible.builtin.command: ufw allow OpenSSH
+  register: common_ufw_allow_openssh
+  changed_when: "'Skipping' not in common_ufw_allow_openssh.stdout"
+  when: "'OpenSSH' not in common_ufw_status.stdout"
+
+- name: Set UFW default policies
+  ansible.builtin.command: "ufw default {{ item.policy }} {{ item.direction }}"
+  loop:
+    - { policy: deny, direction: incoming }
+    - { policy: allow, direction: outgoing }
+  register: common_ufw_default
+  changed_when: "'changed to' in common_ufw_default.stdout"
+  when: "item.policy + ' (' + item.direction + ')' not in common_ufw_status.stdout"
+
+- name: Enable UFW
+  ansible.builtin.command: ufw --force enable
+  register: common_ufw_enable
+  changed_when: "'Firewall is active' in common_ufw_enable.stdout"
+  when: "'Status: active' not in common_ufw_status.stdout"
+
+- name: Check if a reboot is required
+  ansible.builtin.stat:
+    path: /var/run/reboot-required
+  register: common_reboot_required
+
+- name: Warn if a reboot is required
+  ansible.builtin.debug:
+    msg: "A reboot is required on this host (kernel/library update) — reboot manually when convenient."
+  when: common_reboot_required.stat.exists

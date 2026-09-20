@@ -1,0 +1,7 @@
+---
+- name: Bootstrap homelab hosts for running services
+  hosts: homelab
+  become: true
+  roles:
+    - common
+    - docker
