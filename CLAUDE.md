@@ -1,6 +1,6 @@
 # Homelab
 
-This is the root repo for homelab provisioning and base infrastructure. The goal of this project is to provide a way to fully automate configuring the homelab servers ready to run services. The services are not part of this repo, and will be their own repositories.
+This is the root repo for homelab provisioning and base infrastructure. The goal of this project is to provide a way to fully automate configuring the homelab servers ready to run self hosted services. The services are not part of this repo, and will be their own repositories under @services/ [`services/`](services/) folder.
 
 ## Current Setup
 
@@ -18,4 +18,5 @@ All the homelab machines are accessible using SSH.
 ## Important
 
 - Do not commit any sensitive data. No IP, hostname, user or key getting committed.
+- Leave good documentation on all files and have a well updated README.md.
 

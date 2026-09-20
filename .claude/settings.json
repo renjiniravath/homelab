@@ -1,0 +1,28 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "jq -r '.tool_input.file_path // empty' | { read -r f; case \"$f\" in *inventory/hosts.yml|*inventory/host_vars/*|*inventory/group_vars/*/vault.yml) jq -n '{hookSpecificOutput:{hookEventName:\"PreToolUse\",permissionDecision:\"deny\",permissionDecisionReason:\"Blocked: real inventory or secrets file must not be written by Claude (see .gitignore).\"}}' ;; esac; }",
+            "statusMessage": "Checking for real inventory/secrets file..."
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "jq -r '.tool_input.file_path // .tool_response.filePath // empty' | { read -r f; case \"$f\" in *playbooks/*.yml|*playbooks/*.yaml|*roles/*.yml|*roles/*.yaml) out=$(PYTHONWARNINGS=ignore uvx ansible-lint --nocolor -f pep8 \"$f\" 2>&1); if [ -n \"$out\" ]; then jq -n --arg out \"$out\" '{hookSpecificOutput:{hookEventName:\"PostToolUse\",additionalContext:$out}}'; fi;; esac; }",
+            "statusMessage": "Running ansible-lint..."
+          }
+        ]
+      }
+    ]
+  }
+}
