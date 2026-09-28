@@ -40,6 +40,12 @@ uv run ansible-lint playbooks roles
 | `services/` | Service repos (gitignored, each has its own repository) |
 | `.claude/` | Claude Code hooks, skills and agents for this repo |
 
+## Services
+
+| Service | Repo | Purpose |
+| --- | --- | --- |
+| AdGuard Home | `services/adguard-home` | Opt-in DNS ad blocking for signed-up devices |
+
 ## Rules
 
 No IPs, hostnames, users or keys are committed. Run the `secrets-scan` skill before committing.
